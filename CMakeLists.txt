@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(sources src/main.cpp)
 set(INCLUDE_DIR /usr/include)
 
-
 if((NOT ${EIGEN_INCLUDE_DIR}) OR (NOT EXISTS ${EIGEN_INCLUDE_DIR}))
     message("Installing Eigen library...")
 
@@ -28,6 +27,18 @@ else()
     message("Eigen library already present")
 endif()
 
+if((NOT ${JSON_INCLUDE_DIR}) OR (NOT EXISTS ${JSON_INCLUDE_DIR}))
+    message("Installing Json library...")
+
+    execute_process(COMMAND git submodule update --init -- third_party/json
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+    set(JSON_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/json/single_include/nlohmann)
+
+else()
+    message("Json library already present")
+endif()
+
 add_executable(extended_kalman_filter ${sources})
-target_include_directories(extended_kalman_filter PRIVATE ${EIGEN_INCLUDE_DIR})
+target_include_directories(extended_kalman_filter PRIVATE ${EIGEN_INCLUDE_DIR} ${JSON_INCLUDE_DIR})
 target_link_libraries(extended_kalman_filter)
