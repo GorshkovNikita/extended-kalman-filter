@@ -7,16 +7,14 @@ using namespace std;
 using namespace Eigen;
 using namespace nlohmann;
 
-struct SocketData {
-    char* data;
-};
+struct SocketData {};
 
 uWS::TemplatedApp<false>::WebSocketBehavior createWSBehaviour() {
     return uWS::TemplatedApp<false>::WebSocketBehavior {
             .open = [](auto *ws, auto *req) {
                 cout << "connected" << endl;
             },
-            .message = [](uWS::WebSocket<false, true> *ws, std::string_view message, uWS::OpCode opCode) {
+            .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
                 cout << message << endl;
                 ws->send(message, opCode);
             }
