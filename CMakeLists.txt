@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(extended_kalman_filter)
 
 set(CMAKE_CXX_STANDARD 17)
-set(sources src/main.cpp)
+set(sources src/Main.cpp src/EKFProtocol.cpp)
 set(INCLUDE_DIR /usr/include)
 
 #set(CXX_FLAGS "-Wall")
