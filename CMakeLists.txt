@@ -5,6 +5,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(sources src/main.cpp)
 set(INCLUDE_DIR /usr/include)
 
+#set(CXX_FLAGS "-Wall")
+#set(CMAKE_CXX_FLAGS "${CXX_FLAGS}")
+
 add_definitions(-DLIBUS_NO_SSL -DLIBUS_NO_SSL -DUWS_NO_ZLIB)
 
 if((NOT ${EIGEN_INCLUDE_DIR}) OR (NOT EXISTS ${EIGEN_INCLUDE_DIR}))
@@ -14,19 +17,6 @@ if((NOT ${EIGEN_INCLUDE_DIR}) OR (NOT EXISTS ${EIGEN_INCLUDE_DIR}))
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
     set(EIGEN_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/eigen)  # CACHE PATH "Eigen library include directory"
-
-    # todo: можно попробовать через add_custom_command (или execute_process) скопировать файлы из Eigen в какую-нибудь
-    # todo: отдельную папку с нужной мне вложенностью. 
-
-    # todo: need to understand whether i need it or not
-#    install(DIRECTORY ${EIGEN_INCLUDE_DIR} DESTINATION ${INCLUDE_DIR})
-
-#    add_library(Eigen INTERFACE)
-#    target_include_directories(Eigen INTERFACE
-#            $<BUILD_INTERFACE:${EIGEN_INCLUDE_DIR}/Eigen>
-#            $<INSTALL_INTERFACE:Eigen>)
-
-#    install(TARGETS Eigen EXPORT my_export_set DESTINATION ${INCLUDE_DIR})
 
 else()
     message("Eigen library already present")
