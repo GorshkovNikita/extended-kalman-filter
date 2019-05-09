@@ -75,7 +75,7 @@ Measurement EKFProtocol::parseMeasurement(std::istringstream& measurementStream)
     return measurement;
 }
 
-void EKFProtocol::parseGroundTruth(std::istringstream &measurementStream) {
+void EKFProtocol::parseGroundTruth(std::istringstream& measurementStream) {
     float x_gt;
     float y_gt;
     float vx_gt;
@@ -94,7 +94,7 @@ void EKFProtocol::parseGroundTruth(std::istringstream &measurementStream) {
 }
 
 std::string EKFProtocol::estimate(Measurement& measurement) {
-//    fusionEKF.ProcessMeasurement(meas_package);
+    fusionEkf.processMeasurement(measurement);
     Eigen::VectorXd estimate(4);
 
     double p_x = 0.0; // fusionEKF.ekf_.x_(0);

@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 project(extended_kalman_filter)
 
 set(CMAKE_CXX_STANDARD 17)
-set(sources src/Main.cpp src/EKFProtocol.cpp src/Tools.cpp)
-set(INCLUDE_DIR /usr/include)
+set(sources src/Main.cpp src/EKFProtocol.cpp src/Tools.cpp src/FusionEKF.cpp src/KalmanFilter.cpp)
+set(INCLUDE_DIR /usr/include src)
 
 #set(CXX_FLAGS "-Wall")
 #set(CMAKE_CXX_FLAGS "${CXX_FLAGS}")

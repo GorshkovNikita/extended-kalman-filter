@@ -7,8 +7,9 @@
 
 #include <string_view>
 #include <sstream>
-#include "Measurement.h"
 #include "Eigen/Dense"
+#include "Measurement.h"
+#include "FusionEKF.h"
 
 class EKFProtocol {
 public:
@@ -22,6 +23,7 @@ private:
 
     std::vector<Eigen::VectorXd> estimations;
     std::vector<Eigen::VectorXd> ground_truth;
+    FusionEKF fusionEkf;
 };
 
 
