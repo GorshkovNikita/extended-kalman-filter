@@ -9,10 +9,7 @@
 
 class Measurement {
 public:
-    enum SensorType{
-        LASER,
-        RADAR
-    } sensor_type;
+    enum SensorType { LASER, RADAR } sensor_type;
 
     long long timestamp;
 
