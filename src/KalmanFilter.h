@@ -43,7 +43,7 @@ public:
      */
     void updateEKF(const Eigen::VectorXd &z);
 
-    // state vector
+    // state vector (px, py, vx, vy)
     Eigen::VectorXd x;
 
     // state covariance matrix

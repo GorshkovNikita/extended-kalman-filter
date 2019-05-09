@@ -27,6 +27,7 @@ FusionEKF::FusionEKF() {
      * TODO: Set the process and measurement noises
      */
 
+//    ???
 //    kalmanFilter.init()
 
 }
@@ -41,6 +42,8 @@ void FusionEKF::processMeasurement(Measurement& measurement) {
          * You'll need to convert radar from polar to cartesian coordinates.
          */
 
+//        ???
+//        kalmanFilter.init()
 
         is_initialized = true;
         return;
