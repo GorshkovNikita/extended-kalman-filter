@@ -7,7 +7,6 @@
 
 #include <string_view>
 
-
 class EKFProtocol {
 public:
     std::string_view processMessage(std::string_view message);
