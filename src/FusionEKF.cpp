@@ -3,10 +3,14 @@
 //
 
 #include "FusionEKF.h"
+#include "Tools.h"
+#include <math.h>
 
 FusionEKF::FusionEKF() {
     is_initialized = false;
     previous_timestamp = 0;
+    noise_ax = 9;
+    noise_ay = 9;
 
     R_laser = Eigen::MatrixXd(2, 2);
     R_radar = Eigen::MatrixXd(3, 3);
@@ -27,8 +31,11 @@ FusionEKF::FusionEKF() {
      * TODO: Set the process and measurement noises
      */
 
-//    ???
-//    kalmanFilter.init()
+
+    H_laser <<  1, 0, 0, 0,
+                0, 1, 0, 0;
+
+    kalmanFilter.init();
 
 }
 
@@ -42,9 +49,16 @@ void FusionEKF::processMeasurement(Measurement& measurement) {
          * You'll need to convert radar from polar to cartesian coordinates.
          */
 
-//        ???
-//        kalmanFilter.init()
+        if (measurement.sensor_type == Measurement::RADAR) {
+            kalmanFilter.x << Tools::convertToCartesian(measurement.raw_measurements);
+        } else {
+            kalmanFilter.x <<   measurement.raw_measurements[0],
+                                measurement.raw_measurements[1],
+                                0,
+                                0;
+        }
 
+        previous_timestamp = measurement.timestamp;
         is_initialized = true;
         return;
     }
@@ -60,6 +74,19 @@ void FusionEKF::processMeasurement(Measurement& measurement) {
      * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
      */
 
+    float dt = (measurement.timestamp - previous_timestamp) / 1000000.0;
+    previous_timestamp = measurement.timestamp;
+
+    kalmanFilter.F <<   1,  0,  dt, 0,
+                        0,  1,  0,  dt,
+                        0,  0,  1,  0,
+                        0,  0,  0,  1;
+
+    kalmanFilter.Q <<   std::pow(dt, 4) * noise_ax / 4.0,  0,  std::pow(dt, 3) * noise_ax / 2.0,  0,
+                        0,  std::pow(dt, 4) * noise_ay / 4.0,  0,  std::pow(dt, 3) * noise_ay / 2.0,
+                        std::pow(dt, 3) * noise_ax / 2.0,  0,  std::pow(dt, 2) * noise_ax,  0,
+                        0,  std::pow(dt, 3) * noise_ay / 2.0,  0,  std::pow(dt, 2) * noise_ay;
+
     kalmanFilter.predict();
 
     /**
@@ -73,8 +100,13 @@ void FusionEKF::processMeasurement(Measurement& measurement) {
      */
 
     if (measurement.sensor_type == Measurement::RADAR) {
-//        kalmanFilter.updateEKF();
+        kalmanFilter.R << R_radar;
+        kalmanFilter.H << H_laser;
+        kalmanFilter.updateEKF(measurement.raw_measurements);
     } else {
-//        kalmanFilter.update();
+        kalmanFilter.R << R_laser;
+        Hj << Tools::calculateJacobian(kalmanFilter.x);
+        kalmanFilter.H << Hj;
+        kalmanFilter.update(measurement.raw_measurements);
     }
 }

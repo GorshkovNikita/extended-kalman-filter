@@ -54,3 +54,22 @@ Eigen::MatrixXd Tools::calculateJacobian(const Eigen::VectorXd &x_state) {
 
     return Hj;
 }
+
+Eigen::VectorXd Tools::convertToPolar(const Eigen::VectorXd &x) {
+    Eigen::VectorXd hx = Eigen::VectorXd(3);
+    float rho = std::sqrt(std::pow(x(0), 2) + std::pow(x(1), 2));
+    hx <<   rho,
+            std::atan2(x(1), x(0)),
+            (x(0) * x(2) + x(1) * x(3)) / rho;
+    return hx;
+}
+
+Eigen::VectorXd Tools::convertToCartesian(const Eigen::VectorXd &z) {
+    Eigen::VectorXd x = Eigen::VectorXd(4);
+    // todo: do i need to convert velocity?
+    x << z(0) * std::cos(z(1)),
+         z(1) * std::sin(z(1)),
+         0,
+         0;
+    return x;
+}
