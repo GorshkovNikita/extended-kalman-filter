@@ -13,6 +13,8 @@
 
 class EKFProtocol {
 public:
+    EKFProtocol();
+
     std::string processMessage(std::string_view message);
 
 private:

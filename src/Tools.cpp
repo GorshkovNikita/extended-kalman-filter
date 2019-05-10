@@ -3,6 +3,7 @@
 //
 
 #include "Tools.h"
+#include <iostream>
 
 Eigen::VectorXd Tools::calculateRMSE(const std::vector<Eigen::VectorXd> &estimations,
                                      const std::vector<Eigen::VectorXd> &ground_truth) {
@@ -32,5 +33,24 @@ Eigen::VectorXd Tools::calculateRMSE(const std::vector<Eigen::VectorXd> &estimat
 }
 
 Eigen::MatrixXd Tools::calculateJacobian(const Eigen::VectorXd &x_state) {
-    return Eigen::MatrixXd();
+    Eigen::MatrixXd Hj(3,4);
+    float px = x_state(0);
+    float py = x_state(1);
+    float vx = x_state(2);
+    float vy = x_state(3);
+
+    float c1 = px * px + py * py;
+    float c2 = sqrt(c1);
+    float c3 = c1 * c2;
+
+    if (fabs(c1) < 0.0001) {
+        std::cout << "CalculateJacobian() - Error - Division by Zero" << std::endl;
+        return Hj;
+    }
+
+    Hj <<   (px/c2),                (py/c2),                0,      0,
+            -(py/c1),               (px/c1),                0,      0,
+            py*(vx*py - vy*px)/c3,  px*(px*vy - py*vx)/c3,  px/c2,  py/c2;
+
+    return Hj;
 }

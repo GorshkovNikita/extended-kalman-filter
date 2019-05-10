@@ -4,6 +4,8 @@ project(extended_kalman_filter)
 set(CMAKE_CXX_STANDARD 17)
 set(sources src/Main.cpp src/EKFProtocol.cpp src/Tools.cpp src/FusionEKF.cpp src/KalmanFilter.cpp)
 set(INCLUDE_DIR src) #  /usr/include
+set(CMAKE_INSTALL_LIBDIR /usr/lib)
+message(${CMAKE_CURRENT_BINARY_DIR})
 
 #set(CXX_FLAGS "-Wall")
 #set(CMAKE_CXX_FLAGS "${CXX_FLAGS}")
@@ -78,7 +80,15 @@ if((NOT ${LIBUV_INCLUDE_DIR}) OR (NOT EXISTS ${LIBUV_INCLUDE_DIR}))
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
     add_subdirectory(third_party/libuv)
-
+	if (WIN32)
+		# todo: работает только для windows, подумать как сделать для linux
+		message(${CMAKE_CURRENT_BINARY_DIR})
+		configure_file(
+				${CMAKE_CURRENT_BINARY_DIR}/third_party/libuv/uv.dll
+				${CMAKE_CURRENT_BINARY_DIR}/uv.dll
+				COPYONLY
+		)
+	endif()
     set(LIBUV_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/libuv/include)
 
 else()
@@ -92,4 +102,5 @@ target_include_directories(
         extended_kalman_filter PRIVATE
         ${INCLUDE_DIR} ${EIGEN_INCLUDE_DIR} ${JSON_INCLUDE_DIR} ${UWS_INCLUDE_DIR} ${USOCKETS_INCLUDE_DIR}
 )
-target_link_libraries(extended_kalman_filter uSockets ) #  ssl z uv
+target_link_directories(extended_kalman_filter PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/third_party/libuv)
+target_link_libraries(extended_kalman_filter uSockets uv) #  ssl z

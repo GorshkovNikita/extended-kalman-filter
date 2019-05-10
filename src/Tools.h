@@ -6,6 +6,7 @@
 #define EXTENDED_KALMAN_FILTER_TOOLS_H
 
 #include "Eigen/Dense"
+#include <vector>
 
 class Tools {
 public:

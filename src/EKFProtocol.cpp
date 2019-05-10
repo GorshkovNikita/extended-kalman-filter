@@ -8,6 +8,8 @@
 
 using namespace nlohmann;
 
+EKFProtocol::EKFProtocol() {}
+
 std::string EKFProtocol::processMessage(std::string_view message) {
     if (message.size() > 2 && message[0] == '4' && message[1] == '2') {
         std::string jsonPayload = extractPayload(message.data());
