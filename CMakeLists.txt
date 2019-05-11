@@ -102,5 +102,5 @@ target_include_directories(
         extended_kalman_filter PRIVATE
         ${INCLUDE_DIR} ${EIGEN_INCLUDE_DIR} ${JSON_INCLUDE_DIR} ${UWS_INCLUDE_DIR} ${USOCKETS_INCLUDE_DIR}
 )
-target_link_directories(extended_kalman_filter PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/third_party/libuv)
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/third_party/libuv)
 target_link_libraries(extended_kalman_filter uSockets uv) #  ssl z
