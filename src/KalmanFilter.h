@@ -60,6 +60,8 @@ public:
     // measurement covariance matrix
     Eigen::MatrixXd R;
 
+    Eigen::MatrixXd I;
+
 private:
     Eigen::VectorXd h(Eigen::VectorXd& prev_x);
 };

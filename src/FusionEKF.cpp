@@ -15,7 +15,6 @@ FusionEKF::FusionEKF() {
     R_laser = Eigen::MatrixXd(2, 2);
     R_radar = Eigen::MatrixXd(3, 3);
     H_laser = Eigen::MatrixXd(2, 4);
-    Hj = Eigen::MatrixXd(3, 4);
 
     //measurement covariance matrix - laser
     R_laser <<  0.0225, 0,
@@ -50,12 +49,16 @@ void FusionEKF::processMeasurement(Measurement& measurement) {
          */
 
         if (measurement.sensor_type == Measurement::RADAR) {
-            kalmanFilter.x << Tools::convertToCartesian(measurement.raw_measurements);
+            Eigen::VectorXd x = Tools::convertToCartesian(measurement.raw_measurements);
+            kalmanFilter.x(0) = x[0];
+            kalmanFilter.x(1) = x[1];
+            kalmanFilter.x(2) = x[2];
+            kalmanFilter.x(3) = x[3];
         } else {
-            kalmanFilter.x <<   measurement.raw_measurements[0],
-                                measurement.raw_measurements[1],
-                                0,
-                                0;
+            kalmanFilter.x(0) = measurement.raw_measurements[0];
+            kalmanFilter.x(1) = measurement.raw_measurements[1];
+            kalmanFilter.x(2) = 0.0;
+            kalmanFilter.x(3) = 0.0;
         }
 
         previous_timestamp = measurement.timestamp;
@@ -100,13 +103,16 @@ void FusionEKF::processMeasurement(Measurement& measurement) {
      */
 
     if (measurement.sensor_type == Measurement::RADAR) {
+        kalmanFilter.R = Eigen::MatrixXd(3, 3);
         kalmanFilter.R << R_radar;
-        kalmanFilter.H << H_laser;
+        kalmanFilter.H = Eigen::MatrixXd(3,4);
+        kalmanFilter.H << Tools::calculateJacobian(kalmanFilter.x);
         kalmanFilter.updateEKF(measurement.raw_measurements);
     } else {
+        kalmanFilter.R = Eigen::MatrixXd(2, 2);
         kalmanFilter.R << R_laser;
-        Hj << Tools::calculateJacobian(kalmanFilter.x);
-        kalmanFilter.H << Hj;
+        kalmanFilter.H = Eigen::MatrixXd(2,4);
+        kalmanFilter.H << H_laser;
         kalmanFilter.update(measurement.raw_measurements);
     }
 }

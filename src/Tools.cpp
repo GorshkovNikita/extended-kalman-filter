@@ -1,12 +1,16 @@
+#include <cmath>
+
 //
 // Created by nikita on 09.05.19.
 //
 
 #include "Tools.h"
 #include <iostream>
+#include <math.h>
 
 Eigen::VectorXd Tools::calculateRMSE(const std::vector<Eigen::VectorXd> &estimations,
                                      const std::vector<Eigen::VectorXd> &ground_truth) {
+    // todo: could be optimized...
     if (estimations.empty() || estimations.size() != ground_truth.size()) {
         return Eigen::VectorXd();
     }
@@ -40,10 +44,10 @@ Eigen::MatrixXd Tools::calculateJacobian(const Eigen::VectorXd &x_state) {
     float vy = x_state(3);
 
     float c1 = px * px + py * py;
-    float c2 = sqrt(c1);
+    float c2 = std::sqrt(c1);
     float c3 = c1 * c2;
 
-    if (fabs(c1) < 0.0001) {
+    if (std::fabs(c1) < 0.0001) {
         std::cout << "CalculateJacobian() - Error - Division by Zero" << std::endl;
         return Hj;
     }
@@ -58,9 +62,8 @@ Eigen::MatrixXd Tools::calculateJacobian(const Eigen::VectorXd &x_state) {
 Eigen::VectorXd Tools::convertToPolar(const Eigen::VectorXd &x) {
     Eigen::VectorXd hx = Eigen::VectorXd(3);
     float rho = std::sqrt(std::pow(x(0), 2) + std::pow(x(1), 2));
-    hx <<   rho,
-            std::atan2(x(1), x(0)),
-            (x(0) * x(2) + x(1) * x(3)) / rho;
+    float phi = std::atan2(x(1), x(0));
+    hx << rho, convertAngle(phi), (x(0) * x(2) + x(1) * x(3)) / rho;
     return hx;
 }
 
@@ -72,4 +75,20 @@ Eigen::VectorXd Tools::convertToCartesian(const Eigen::VectorXd &z) {
          0,
          0;
     return x;
+}
+
+float Tools::convertAngle(float angle) {
+    if ((angle >= 0) && angle <= 2 * M_PI) {
+        return angle;
+    } else if (angle < 0) {
+        do {
+            angle = angle + 2 * M_PI;
+        } while (angle < 0);
+        return angle;
+    } else if (angle > 2 * M_PI) {
+        do {
+            angle = angle - 2 * M_PI;
+        } while (angle > 2 * M_PI);
+        return angle;
+    }
 }

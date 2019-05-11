@@ -24,6 +24,7 @@ public:
 
     static Eigen::VectorXd convertToPolar(const Eigen::VectorXd &x);
     static Eigen::VectorXd convertToCartesian(const Eigen::VectorXd &z);
+    static float convertAngle(float angle);
 };
 
 

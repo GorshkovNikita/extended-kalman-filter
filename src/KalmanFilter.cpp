@@ -5,6 +5,7 @@
 #include "KalmanFilter.h"
 #include "Eigen/Dense"
 #include "Tools.h"
+#include <iostream>
 
 KalmanFilter::KalmanFilter() = default;
 
@@ -24,6 +25,7 @@ void KalmanFilter::init() {
     H = Eigen::MatrixXd(2, 4);
     F = Eigen::MatrixXd(4, 4);
     Q = Eigen::MatrixXd(4, 4);
+    I = Eigen::MatrixXd::Identity(x.size(), x.size());
 }
 
 void KalmanFilter::predict() {
@@ -39,8 +41,6 @@ void KalmanFilter::update(const Eigen::VectorXd &z) {
     Eigen::MatrixXd K = P * Ht * Si;
 
     x = x + (K * y);
-
-    Eigen::MatrixXd I = Eigen::MatrixXd::Identity(x.size(), x.size());
     P = (I - K * H) * P;
 }
 
@@ -52,7 +52,5 @@ void KalmanFilter::updateEKF(const Eigen::VectorXd &z) {
     Eigen::MatrixXd K = P * Ht * Si;
 
     x = x + (K * y);
-
-    Eigen::MatrixXd I = Eigen::MatrixXd::Identity(x.size(), x.size());
     P = (I - K * H) * P;
 }

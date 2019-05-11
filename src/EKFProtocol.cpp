@@ -5,6 +5,7 @@
 #include "EKFProtocol.h"
 #include "json.hpp"
 #include "Tools.h"
+#include <iostream>
 
 using namespace nlohmann;
 
@@ -70,7 +71,7 @@ Measurement EKFProtocol::parseMeasurement(std::istringstream& measurementStream)
         measurementStream >> ro;
         measurementStream >> theta;
         measurementStream >> ro_dot;
-        measurement.raw_measurements << ro,theta, ro_dot;
+        measurement.raw_measurements << ro, Tools::convertAngle(theta), ro_dot;
         measurementStream >> timestamp;
         measurement.timestamp = timestamp;
     }
@@ -99,10 +100,10 @@ std::string EKFProtocol::estimate(Measurement& measurement) {
     fusionEkf.processMeasurement(measurement);
     Eigen::VectorXd estimate(4);
 
-    double p_x = 0.0; // fusionEKF.ekf_.x_(0);
-    double p_y = 0.0; // fusionEKF.ekf_.x_(1);
-    double v1  = 0.0; // fusionEKF.ekf_.x_(2);
-    double v2 = 0.0; // fusionEKF.ekf_.x_(3);
+    double p_x = fusionEkf.kalmanFilter.x(0);
+    double p_y = fusionEkf.kalmanFilter.x(1);
+    double v1  = fusionEkf.kalmanFilter.x(2);
+    double v2 = fusionEkf.kalmanFilter.x(3);
 
     estimate(0) = p_x;
     estimate(1) = p_y;
